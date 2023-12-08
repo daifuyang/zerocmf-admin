@@ -219,7 +219,7 @@ export default () => {
                   {loginType === 'account' && (
                     <>
                       <ProFormText
-                        name="username"
+                        name="account"
                         fieldProps={{
                           size: 'large',
                           prefix: <UserOutlined className={'prefixIcon'} />,

@@ -22,8 +22,6 @@ import { codeMessage } from './utils/request';
 
 const loginPath = '/user/login';
 
-const tabRoutes:any = [];
-
 export const styledComponents = {
   GlobalStyle: createGlobalStyle``,
 };
@@ -33,7 +31,6 @@ export const styledComponents = {
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: any; // TODO: 定义当前用户信息
-  tabRoutes: any[];
   fetchUserInfo?: () => Promise<any | undefined>;
 }> {
   const fetchUserInfo = async () => {
@@ -52,13 +49,11 @@ export async function getInitialState(): Promise<{
     return {
       fetchUserInfo,
       currentUser,
-      tabRoutes,
       settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
 
   return {
-    tabRoutes,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
@@ -119,7 +114,7 @@ const authHeaderInterceptor = (
     if (token) {
       const data = JSON.parse(token);
       options.headers = {
-        Authorization: `Bearer ${data.token}`,
+        Authorization: `Bearer ${data.access_token}`,
       };
     } else {
       history.push(loginPath);

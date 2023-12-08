@@ -49,6 +49,10 @@ const Organization = () => {
           defaultExpandAll
           onSelect={onSelect}
           blockNode
+          fieldNames={{
+            title: 'deptName',
+            key: 'deptId',
+          }}
           treeData={treeData}
         />
       )}

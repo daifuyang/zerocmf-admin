@@ -1,37 +1,45 @@
 import {
   history,
   useAppData,
-  useModel,
+  useLocation,
   useOutlet,
   useRouteProps,
 } from '@umijs/max';
 import { ConfigProvider, Tabs } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const TabLayout = () => {
   const routeProps = useRouteProps();
+  const location = useLocation();
+
   const outlet = useOutlet();
 
   const redirect = useMemo(() => {
     if (!routeProps.name) {
-      return outlet
+      return outlet;
     }
-  }, [routeProps]);
+  }, [location]);
 
-
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const [init, setInit] = useState(true);
+  const [routes, setRoutes] = useState<any>([]);
   // 获取当前路由信息
-  const routesArr: any[] = initialState?.tabRoutes || [];
 
   const data: any = useAppData();
+  const { clientRoutes } = data;
 
-  const getAffix = (routes: []) => {
+  const getAffix = useCallback((routes: []) => {
     let affixRoutes: any = [];
     for (let index = 0; index < routes.length; index++) {
       const item: any = routes[index];
       const { children, affix } = item;
       if (affix) {
-        affixRoutes.push(item);
+        affixRoutes.push({
+          closable: false,
+          id: item.id,
+          label: item.name,
+          key: item.path,
+          children: item.element,
+        });
       }
       if (children && children.length > 0) {
         const childRoutes: any = getAffix(children);
@@ -39,46 +47,36 @@ const TabLayout = () => {
       }
     }
     return affixRoutes;
-  };
-
-  useEffect(() => {
-    const { clientRoutes } = data;
-    const affixRoutes = getAffix(clientRoutes);
-    setInitialState((prevState) => ({
-      ...prevState,
-      tabRoutes: affixRoutes,
-    }));
   }, []);
 
   useEffect(() => {
-    const index = routesArr.findIndex(
-      (item) => item?.path === routeProps?.path,
-    );
+    const { pathname } = location;
+    const { name } = routeProps;
+    const newRoutes = [...routes];
 
-    if (routeProps?.name) {
-      const tabRoutes = [...routesArr];
-      if (index > -1) {
-        if (!tabRoutes[index]?.outlet) {
-          tabRoutes[index] = { ...tabRoutes[index], element: outlet };
-        }
-      } else {
-        tabRoutes.push({ ...routeProps, element: outlet });
-      }
-      setInitialState((preInitialState: any) => ({
-        ...preInitialState,
-        tabRoutes,
-      }));
+    if (init) {
+      setInit(false);
+      const affixRoutes = getAffix(clientRoutes);
+      newRoutes.push(...affixRoutes);
     }
-  }, [routesArr, routeProps]);
 
-  const defaultPanes = routesArr.map((item) => {
-    return {
-      label: item.name,
-      key: item.path,
-      closable: !item.affix,
-      children: item.element,
-    };
-  });
+    // 判断当前路由是否存在
+    if (!!name) {
+      // 存在
+      const index = newRoutes.findIndex((item: any) => item.key === pathname);
+      if (index === -1) {
+        // 新增
+        newRoutes.push({
+          id: routeProps.id,
+          label: routeProps.name,
+          key: routeProps.path,
+          children: outlet,
+        });
+      }
+    }
+
+    setRoutes(newRoutes);
+  }, [location]);
 
   return (
     <>
@@ -96,13 +94,13 @@ const TabLayout = () => {
           hideAdd
           activeKey={routeProps.path}
           type="editable-card"
-          items={defaultPanes}
+          items={routes}
           onTabClick={(key) => {
             history.push(key);
           }}
           onEdit={(targetKey: any, action) => {
             if (action === 'remove') {
-              const tabRoutes: any = [...routesArr];
+              const tabRoutes: any = [...routes];
               const index = tabRoutes.findIndex(
                 (item: any) => item.path === targetKey,
               );
@@ -119,10 +117,7 @@ const TabLayout = () => {
               }
 
               tabRoutes.splice(index, 1);
-              setInitialState((preInitialState: any) => ({
-                ...preInitialState,
-                tabRoutes,
-              }));
+              setRoutes(tabRoutes);
             }
           }}
         />

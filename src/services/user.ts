@@ -7,15 +7,15 @@ interface loginParams {
   password: string;
 }
 
-export async function login(params: loginParams) {
+export async function login(data: loginParams) {
   return authRequest('/api/v1/user/login', {
-    method: 'GET',
-    params,
+    method: 'POST',
+    data,
   });
 }
 // 获取当前用户信息
 export async function currentUser() {
-  return authRequest('/api/v1/user/current', {
+  return authRequest('/api/v1/user/current_user', {
     method: 'GET',
   });
 }
