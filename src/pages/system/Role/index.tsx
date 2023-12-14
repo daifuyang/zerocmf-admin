@@ -42,14 +42,12 @@ const Role = () => {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: any) => (
-        <span>{status === 'active' ? '启用' : '禁用'}</span>
-      ),
+      render: (status: any) => <span>{status === 1 ? '启用' : '禁用'}</span>,
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
     },
     {
       title: '操作',

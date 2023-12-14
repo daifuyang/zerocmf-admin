@@ -12,7 +12,7 @@ export default [
     name: '首页',
     path: '/dashboard',
     component: './Dashboard',
-    affix: true
+    affix: true,
   },
   {
     name: '系统管理',
@@ -40,6 +40,7 @@ export default [
       {
         name: '部门管理',
         path: '/system/dept',
+        component: './system/Dept',
       },
       {
         name: '岗位管理',

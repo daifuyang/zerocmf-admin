@@ -54,6 +54,7 @@ export async function getInitialState(): Promise<{
   }
 
   return {
+    fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
@@ -132,21 +133,19 @@ export const request: RequestConfig = {
   requestInterceptors: [authHeaderInterceptor],
   errorConfig: {
     errorHandler(error: any) {
-      console.log('error', error);
-
       const { response } = error;
       if (response && response.status) {
         const errorText = codeMessage[response.status] || response.statusText;
         const { status, url } = response;
 
-        if (status === 401) {
-          history.push(loginPath);
-        }
-
         notification.error({
           message: `请求错误 ${status}: ${url}`,
           description: errorText,
         });
+
+        if (status === 401) {
+          history.push(loginPath);
+        }
       } else if (!response) {
         notification.error({
           description: '您的网络发生异常，无法连接服务器',

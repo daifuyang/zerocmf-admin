@@ -1,3 +1,4 @@
+import { getMenus } from '@/services/menu';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Divider, Popconfirm, Space, message } from 'antd';
@@ -22,8 +23,8 @@ const Menu = () => {
   const columns: ProColumns<menuItem>[] = [
     {
       title: '菜单名称',
-      key: 'name',
-      dataIndex: 'name',
+      key: 'menuName',
+      dataIndex: 'menuName',
     },
     {
       title: '图标',
@@ -32,18 +33,13 @@ const Menu = () => {
     },
     {
       title: '排序',
-      key: 'order',
-      dataIndex: 'order',
+      key: 'listOrder',
+      dataIndex: 'listOrder',
     },
     {
       title: '权限标识',
-      key: 'access',
-      dataIndex: 'access',
-    },
-    {
-      title: '组件路径',
-      key: 'component',
-      dataIndex: 'component',
+      key: 'perms',
+      dataIndex: 'perms',
     },
     {
       title: '状态',
@@ -52,8 +48,8 @@ const Menu = () => {
     },
     {
       title: '创建时间',
-      key: 'create_time',
-      dataIndex: 'create_time',
+      key: 'createdAt',
+      dataIndex: 'createdAt',
     },
     {
       title: '操作',
@@ -86,97 +82,27 @@ const Menu = () => {
     },
   ];
 
-  const menuData: menuItem[] = [
-    {
-      id: 1,
-      name: '首页',
-      icon: 'home',
-      order: 1,
-      access: 'dashboard',
-      component: './Dashboard',
-      status: true,
-      createTime: '2023-10-08',
-    },
-    {
-      id: 2,
-      name: '系统管理',
-      icon: 'settings',
-      order: 2,
-      access: 'system',
-      component: './System',
-      status: true,
-      createTime: '2023-10-08',
-      children: [
-        {
-          id: 3,
-          name: '用户管理',
-          icon: 'user',
-          order: 1,
-          access: 'user',
-          component: './User',
-          status: true,
-          createTime: '2023-10-08',
-        },
-        {
-          id: 4,
-          name: '角色管理',
-          icon: 'user-group',
-          order: 2,
-          access: 'role',
-          component: './Role',
-          status: true,
-          createTime: '2023-10-08',
-        },
-        {
-          id: 5,
-          name: '菜单管理',
-          icon: 'menu',
-          order: 3,
-          access: 'menu',
-          component: './Menu',
-          status: true,
-          createTime: '2023-10-08',
-        },
-      ],
-    },
-    {
-      id: 6,
-      name: '系统监控',
-      icon: 'monitor',
-      order: 3,
-      access: 'monitor',
-      component: './Monitor',
-      status: true,
-      createTime: '2023-10-08',
-      children: [
-        {
-          id: 7,
-          name: '在线用户',
-          icon: 'user-online',
-          order: 1,
-          access: 'online',
-          component: './Online',
-          status: true,
-          createTime: '2023-10-08',
-        },
-        {
-          id: 8,
-          name: '定时任务',
-          icon: 'clock',
-          order: 2,
-          access: 'job',
-          component: './Job',
-          status: true,
-          createTime: '2023-10-08',
-        },
-      ],
-    },
-  ];
   return (
     <ProTable<menuItem>
       columns={columns}
       cardBordered
-      rowKey="id"
+      rowKey="menuId"
+      request={async (params = {}) => {
+        const res = await getMenus(params);
+        if (res.code === 1) {
+          return await {
+            success: true,
+            data: res.data,
+            msg: res.msg,
+          };
+        }
+
+        return await {
+          success: false,
+          data: [],
+          msg: res.msg,
+        };
+      }}
       dateFormatter="string"
       headerTitle="菜单列表"
       toolBarRender={() => [
@@ -189,7 +115,6 @@ const Menu = () => {
           新建
         </Button>,
       ]}
-      dataSource={menuData}
     />
   );
 };

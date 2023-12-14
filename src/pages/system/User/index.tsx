@@ -9,6 +9,9 @@ import { Button, Col, Popconfirm, Row, Space, Switch, message } from 'antd';
 import { getSystemUsers } from '@/services/user';
 import Organization from './components/organization';
 
+import { useRef } from 'react';
+import ModalSave, { SaveAction } from './Save';
+
 // const valueEnum = {
 //   '': 'all',
 //   0: 'enabled',
@@ -16,6 +19,8 @@ import Organization from './components/organization';
 // };
 
 function User() {
+  const modalRef = useRef<SaveAction>(null);
+
   const confirmDelete = () => {
     message.success('Click on Yes');
   };
@@ -33,14 +38,14 @@ function User() {
   const columns: ProColumns<systemUserItem>[] = [
     {
       title: '账号',
-      dataIndex: 'account',
-      key: 'account',
+      dataIndex: 'loginName',
+      key: 'loginName',
       order: 5,
     },
     {
       title: '姓名',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'userName',
+      key: 'userName',
       order: 4,
     },
     {
@@ -51,28 +56,28 @@ function User() {
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
+      dataIndex: 'createdAt',
       key: 'createTime',
       hideInSearch: true,
     },
     {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
       valueType: 'dateRange',
       hideInTable: true,
       order: 1,
     },
     {
       title: '最后登录',
-      dataIndex: 'lastLogin',
-      key: 'lastLogin',
+      dataIndex: 'loginedAt',
+      key: 'loginedAt',
       search: false,
     },
     {
       title: '状态',
-      dataIndex: 'isEnabled',
-      key: 'isEnabled',
+      dataIndex: 'status',
+      key: 'status',
       order: 2,
       valueEnum: {
         all: { text: '全部', status: 'Default' },
@@ -106,6 +111,7 @@ function User() {
 
   return (
     <GridContent>
+      <ModalSave ref={modalRef} />
       <Row gutter={[24, 24]}>
         <Col span={24} md={6}>
           <Organization />
@@ -190,7 +196,11 @@ function User() {
               <Button
                 key="add"
                 icon={<PlusOutlined />}
-                onClick={() => {}}
+                onClick={() => {
+                  modalRef.current?.open({
+                    title: '添加用户',
+                  });
+                }}
                 type="primary"
               >
                 新建

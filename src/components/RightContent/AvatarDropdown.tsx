@@ -72,6 +72,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
     (event: { key: any }) => {
       const { key } = event;
       if (key === 'logout') {
+        localStorage.removeItem('token');
         flushSync(() => {
           setInitialState((s: any) => ({ ...s, currentUser: undefined }));
         });

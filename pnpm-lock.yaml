@@ -23,6 +23,12 @@ dependencies:
   classnames:
     specifier: ^2.3.2
     version: 2.3.2
+  immer:
+    specifier: ^10.0.3
+    version: 10.0.3
+  use-immer:
+    specifier: ^0.9.0
+    version: 0.9.0(immer@10.0.3)(react@18.2.0)
 
 devDependencies:
   '@types/react':
@@ -7082,6 +7088,10 @@ packages:
     dev: false
     optional: true
 
+  /immer@10.0.3:
+    resolution: {integrity: sha512-pwupu3eWfouuaowscykeckFmVTpqbzW+rXFCX8rQLkZzM9ftBmU/++Ra+o+L27mz03zJTlyV4UUr+fdKNffo4A==}
+    dev: false
+
   /immer@8.0.4:
     resolution: {integrity: sha512-jMfL18P+/6P6epANRvRk6q8t+3gGhqsJ9EuJ25AXE+9bNTYtssvzeYbEd0mXRYWCmmXSIbnlpz6vd6iJlmGGGQ==}
     dev: false
@@ -11783,6 +11793,16 @@ packages:
     dependencies:
       punycode: 1.4.1
       qs: 6.11.2
+    dev: false
+
+  /use-immer@0.9.0(immer@10.0.3)(react@18.2.0):
+    resolution: {integrity: sha512-/L+enLi0nvuZ6j4WlyK0US9/ECUtV5v9RUbtxnn5+WbtaXYUaOBoKHDNL9I5AETdurQ4rIFIj/s+Z5X80ATyKw==}
+    peerDependencies:
+      immer: '>=2.0.0'
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      immer: 10.0.3
+      react: 18.2.0
     dev: false
 
   /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.23)(react@18.1.0):
