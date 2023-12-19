@@ -203,7 +203,7 @@ function User() {
                 }}
                 type="primary"
               >
-                新建
+                新增
               </Button>,
               <Button key="import" icon={<ImportOutlined />} onClick={() => {}}>
                 导入

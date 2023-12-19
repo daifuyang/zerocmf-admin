@@ -1,7 +1,7 @@
-import { getMenus } from '@/services/menu';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Divider, Popconfirm, Space, message } from 'antd';
+import { getMenus } from '@/services/menu';
 
 const Menu = () => {
   const confirmDelete = () => {
