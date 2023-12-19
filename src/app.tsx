@@ -34,18 +34,21 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: () => Promise<any | undefined>;
 }> {
   const fetchUserInfo = async () => {
-    const res = await queryCurrentUser();
-    if (res.code !== 1) {
-      message.error('用户身份已失效!');
-      history.push(loginPath);
+    try {
+      const res = await queryCurrentUser();
+      if (res.code !== 1) {
+        message.error('用户身份已失效!');
+        history.push(loginPath);
+        return undefined;
+      }
+      return res.data;
+    } catch (error) {
       return undefined;
     }
-    return res.data;
   };
 
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
-
     return {
       fetchUserInfo,
       currentUser,

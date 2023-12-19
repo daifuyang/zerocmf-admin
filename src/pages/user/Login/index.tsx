@@ -176,15 +176,12 @@ export default () => {
                   subTitle="通用后台管理系统"
                   onFinish={async (value: any) => {
                     const res = await login(value);
-                    console.log('res', res);
                     if (res.code === 1) {
                       message.success(res.msg);
                       const jsonStr = JSON.stringify(res.data);
                       localStorage.setItem('token', jsonStr);
                       const currentUser = await initialState?.fetchUserInfo?.();
-                      console.log('currentUser', initialState, currentUser);
                       setInitialState((prevState: any) => {
-                        console.log('prevState', prevState);
                         return {
                           ...prevState,
                           currentUser,

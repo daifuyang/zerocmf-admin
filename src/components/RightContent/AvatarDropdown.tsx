@@ -26,7 +26,7 @@ export const AvatarName = () => {
     };
   });
 
-  return <span className={actionClassName}>{currentUser?.username}</span>;
+  return <span className={actionClassName}>{currentUser?.username || currentUser?.loginName}</span>;
 };
 
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({

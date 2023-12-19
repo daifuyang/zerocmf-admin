@@ -1,9 +1,12 @@
 import {
   ModalForm,
   ProForm,
-  ProFormDateRangePicker,
+  ProFormCheckbox,
+  ProFormDigit,
+  ProFormRadio,
   ProFormSelect,
   ProFormText,
+  ProFormTextArea,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
 import { Form, message } from 'antd';
@@ -63,65 +66,98 @@ export default forwardRef((props, ref) => {
       <ProForm.Group>
         <ProFormText
           width="md"
-          name="name"
+          name="userName"
           label="用户昵称"
           placeholder="请输入用户昵称"
         />
 
         <ProFormTreeSelect
           width="md"
-          name="name"
+          name="deptId"
           label="归属部门"
           placeholder="请选中归属部门"
         ></ProFormTreeSelect>
       </ProForm.Group>
       <ProForm.Group>
-        <ProFormText
+        <ProFormDigit
           width="md"
-          name="contract"
-          label="合同名称"
+          name="phoneNumber"
+          label="手机号"
           placeholder="请输入名称"
         />
-        <ProFormDateRangePicker name="contractTime" label="合同生效时间" />
+        <ProFormText
+          width="md"
+          label="邮箱"
+          name="email"
+          placeholder="请输入邮箱"
+        />
+      </ProForm.Group>
+      <ProForm.Group>
+        <ProFormText
+          width="md"
+          label="登录账号"
+          name="loginName"
+          placeholder="请输入登录账号"
+        />
+        <ProFormText.Password
+          width="md"
+          name="密码"
+          label="登录密码"
+          placeholder="请输入登录密码"
+        />
       </ProForm.Group>
       <ProForm.Group>
         <ProFormSelect
-          request={async () => [
-            {
-              value: 'chapter',
-              label: '盖章后生效',
-            },
-          ]}
-          width="xs"
-          name="useMode"
-          label="合同约定生效方式"
-        />
-        <ProFormSelect
-          width="xs"
+          width="md"
+          name="gender"
           options={[
             {
-              value: 'time',
-              label: '履行完终止',
+              label: '男',
+              value: 1,
+            },
+            {
+              label: '女',
+              value: 0,
+            },
+            {
+              label: '保密',
+              value: 2,
             },
           ]}
-          name="unusedMode"
-          label="合同约定失效效方式"
+          label="性别"
+          placeholder="请选择性别"
+        />
+        <ProFormRadio.Group
+          width="md"
+          name="status"
+          label="状态"
+          options={[
+            {
+              label: '正常',
+              value: 1,
+            },
+            {
+              label: '停用',
+              value: 0,
+            },
+          ]}
         />
       </ProForm.Group>
-      <ProFormText width="sm" name="id" label="主合同编号" />
-      <ProFormText
-        name="project"
-        disabled
-        label="项目名称"
-        initialValue="xxxx项目"
+      <ProFormCheckbox.Group
+        name="postIds"
+        label="岗位"
+        options={['农业', '制造业', '互联网','123','1234','1236']}
       />
-      <ProFormText
-        width="xs"
-        name="mangerName"
-        disabled
-        label="商务经理"
-        initialValue="启途"
+      <ProFormCheckbox.Group
+        name="roleIds"
+        label="角色"
+        options={['农业', '制造业', '互联网']}
       />
+      <ProFormTextArea formItemProps={{
+        style: {
+          width: '688px'
+        }
+      }} name="remark" label="备注" />
     </ModalForm>
   );
 });
