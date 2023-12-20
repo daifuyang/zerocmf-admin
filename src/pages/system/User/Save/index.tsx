@@ -1,3 +1,5 @@
+import { getRoles } from '@/services/role';
+import { DataState } from '@/typing';
 import {
   ModalForm,
   ProForm,
@@ -9,38 +11,41 @@ import {
   ProFormTextArea,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
-import { Form, message } from 'antd';
+import { App, Form } from 'antd';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-interface DataState {
-  title: string;
-}
-
-// 暴露弹窗的行为
-export interface SaveAction {
-  open: (_data: DataState) => void;
-}
+import styles from './index.less';
 
 export default forwardRef((props, ref) => {
+  const { message } = App.useApp();
+
+  const [form] = Form.useForm<any>();
   const [open, setOpen] = useState(false);
   const [data, setData] = useImmer<DataState>({
     title: '添加用户',
   });
-  const [form] = Form.useForm<{ name: string; company: string }>();
+
+  const [roles, setRoles] = useState<any>([]);
+
+  const fetchRoles = async () => {
+    const res = await getRoles({ current: 1, pageSize: 0 });
+    if (res.code === 1) {
+      setRoles(
+        res.data?.map((item: any) => ({
+          label: item.roleName,
+          value: item.roleId,
+        })),
+      );
+      return;
+    }
+    message.error(res.msg);
+  };
 
   useImperativeHandle(ref, () => ({
     open(_data: DataState) {
       setData(_data);
       setOpen(true);
+      fetchRoles();
     },
   }));
 
@@ -57,8 +62,6 @@ export default forwardRef((props, ref) => {
         },
       }}
       onFinish={async (values) => {
-        await waitTime(2000);
-        console.log(values.name);
         message.success('提交成功');
         return true;
       }}
@@ -146,18 +149,18 @@ export default forwardRef((props, ref) => {
       <ProFormCheckbox.Group
         name="postIds"
         label="岗位"
-        options={['农业', '制造业', '互联网','123','1234','1236']}
+        options={['农业', '制造业', '互联网', '123', '1234', '1236']}
       />
-      <ProFormCheckbox.Group
-        name="roleIds"
-        label="角色"
-        options={['农业', '制造业', '互联网']}
+      <ProFormCheckbox.Group formItemProps={{className: styles.formItem}} name="roleIds" label="角色" options={roles} />
+      <ProFormTextArea
+        formItemProps={{
+          style: {
+            width: '688px',
+          },
+        }}
+        name="remark"
+        label="备注"
       />
-      <ProFormTextArea formItemProps={{
-        style: {
-          width: '688px'
-        }
-      }} name="remark" label="备注" />
     </ModalForm>
   );
 });
