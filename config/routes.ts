@@ -45,6 +45,7 @@ export default [
       {
         name: '岗位管理',
         path: '/system/post',
+        component: './system/Post',
       },
       {
         name: '通知公告',
