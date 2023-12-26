@@ -3,8 +3,8 @@ import { SaveAction } from '@/typing';
 import { statusColumn } from '@/utils/table';
 import { ExportOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProColumns, ProTable } from '@ant-design/pro-components';
-import { Button, Divider, Popconfirm, message } from 'antd';
-import { useRef, useState } from 'react';
+import { Button, Divider, Popconfirm, Space, message } from 'antd';
+import { useRef } from 'react';
 import SaveModal from './saveModal';
 
 type DeptItem = {
@@ -14,7 +14,7 @@ type DeptItem = {
 const Dept = () => {
   const tableRef = useRef<any>();
   const modalRef = useRef<SaveAction>(null);
-  
+
   const confirmDelete = async (id: number) => {
     const res = await deleteDepartment(id);
     if (res.code === 1) {
@@ -46,36 +46,52 @@ const Dept = () => {
     },
     {
       title: '操作',
-      width: 120,
+      width: 180,
       valueType: 'option',
       key: 'option',
-      render: (_, record: any) => [
-        <a
-          key="editable"
-          onClick={() => {
-            modalRef.current?.open({
-              title: '修改部门',
-              id: record.deptId,
-            });
-          }}
-        >
-          修改
-        </a>,
-        <Divider key="divider" type="vertical" />,
-        <Popconfirm
-          key="delete"
-          title="您确定删除吗?"
-          onConfirm={() => {
-            confirmDelete(record.deptId);
-          }}
-          okText="确定"
-          cancelText="取消"
-        >
-          <a style={{ color: '#ff4d4f' }} key="delete">
-            删除
+      render: (_, record: any) => (
+        <Space split={<Divider type="vertical" />}>
+          <a
+            key="editable"
+            onClick={() => {
+              modalRef.current?.open({
+                title: '修改部门',
+                id: record.deptId,
+              });
+            }}
+          >
+            修改
           </a>
-        </Popconfirm>,
-      ],
+
+          <a
+            key="add"
+            onClick={() => {
+              modalRef.current?.open({
+                title: '新增子部门',
+                parentId: record.deptId,
+              });
+            }}
+          >
+            新增
+          </a>
+
+          {record.parentId > 0 && (
+            <Popconfirm
+              key="delete"
+              title="您确定删除吗?"
+              onConfirm={() => {
+                confirmDelete(record.deptId);
+              }}
+              okText="确定"
+              cancelText="取消"
+            >
+              <a style={{ color: '#ff4d4f' }} key="delete">
+                删除
+              </a>
+            </Popconfirm>
+          )}
+        </Space>
+      ),
     },
   ];
 

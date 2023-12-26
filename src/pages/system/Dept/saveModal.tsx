@@ -51,6 +51,10 @@ export default forwardRef((props: any, ref) => {
         fetchDept(_data?.id);
       }
 
+      if(_data?.parentId) {
+        form.setFieldValue('parentId', _data?.parentId);
+      }
+
       setData(_data);
       setOpen(true);
     },
