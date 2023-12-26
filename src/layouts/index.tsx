@@ -102,16 +102,16 @@ const TabLayout = () => {
             if (action === 'remove') {
               const tabRoutes: any = [...routes];
               const index = tabRoutes.findIndex(
-                (item: any) => item.path === targetKey,
+                (item: any) => item.key === targetKey,
               );
               const total = tabRoutes?.length;
               if (targetKey === routeProps.path) {
                 let redirectPath = '/';
                 // 不是最后一个
                 if (total - 1 > index) {
-                  redirectPath = tabRoutes[index + 1]?.path;
+                  redirectPath = tabRoutes[index + 1]?.key;
                 } else if (total - 1 === index && index > 0) {
-                  redirectPath = tabRoutes[index - 1]?.path;
+                  redirectPath = tabRoutes[index - 1]?.key;
                 }
                 history.push(redirectPath);
               }
