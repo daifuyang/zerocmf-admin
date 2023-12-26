@@ -5,21 +5,10 @@ import { ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Divider, Popconfirm, message } from 'antd';
 import { useRef } from 'react';
 import SaveModal from './saveModal';
+import { statusColumn } from '@/utils/table';
 
-const statusEnum: any = {
-  enable: 1,
-  disabled: 0,
-};
-
-type RoleItem = {
-  id: number;
-  roleName: string;
-  permissions: string;
-  listOrder: number;
-  status: 0 | 1;
-  createTime: string;
-  remark: string;
-  menuIds: number[];
+type PostItem = {
+  postId: number;
 };
 
 const Dept = () => {
@@ -36,7 +25,7 @@ const Dept = () => {
     message.error(res.msg);
   };
 
-  const columns: ProColumns<RoleItem>[] = [
+  const columns: ProColumns<PostItem>[] = [
     {
       title: '岗位编号',
       dataIndex: 'postId',
@@ -59,21 +48,7 @@ const Dept = () => {
       key: 'listOrder',
       hideInSearch: true,
     },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      valueEnum: {
-        enable: {
-          text: '启用',
-          status: 'Success',
-        },
-        disabled: {
-          text: '禁用',
-          status: 'Process',
-        },
-      },
-    },
+    statusColumn,
     {
       title: '创建时间',
       dataIndex: 'createdAt',
@@ -124,18 +99,17 @@ const Dept = () => {
         }}
       />
 
-      <ProTable<RoleItem>
+      <ProTable<PostItem>
         columns={columns}
         actionRef={tableRef}
         cardBordered
         request={async (params = {}) => {
-          params.status = statusEnum[params.status];
-
           const res = await getPosts(params);
           if (res.code === 1) {
+            const {data = []} = res.data
             return {
               success: true,
-              data: res.data.data,
+              data,
               msg: res.msg,
             };
           }
