@@ -1,3 +1,5 @@
+import { getDepartments } from '@/services/department';
+import { getPosts } from '@/services/post';
 import { getRoles } from '@/services/role';
 import { DataState } from '@/typing';
 import {
@@ -25,27 +27,10 @@ export default forwardRef((props, ref) => {
     title: '添加用户',
   });
 
-  const [roles, setRoles] = useState<any>([]);
-
-  const fetchRoles = async () => {
-    const res = await getRoles({ current: 1, pageSize: 0 });
-    if (res.code === 1) {
-      setRoles(
-        res.data?.map((item: any) => ({
-          label: item.roleName,
-          value: item.roleId,
-        })),
-      );
-      return;
-    }
-    message.error(res.msg);
-  };
-
   useImperativeHandle(ref, () => ({
     open(_data: DataState) {
       setData(_data);
       setOpen(true);
-      fetchRoles();
     },
   }));
 
@@ -63,6 +48,7 @@ export default forwardRef((props, ref) => {
       }}
       onFinish={async (values) => {
         message.success('提交成功');
+        console.log('values',values)
         return true;
       }}
     >
@@ -79,6 +65,19 @@ export default forwardRef((props, ref) => {
           name="deptId"
           label="归属部门"
           placeholder="请选中归属部门"
+          fieldProps={{
+            fieldNames: {
+              label: 'deptName',
+              value: 'deptId',
+            },
+          }}
+          request={async () => {
+            const res = await getDepartments();
+            if (res.code === 1) {
+              return res.data;
+            }
+            return [];
+          }}
         ></ProFormTreeSelect>
       </ProForm.Group>
       <ProForm.Group>
@@ -149,9 +148,32 @@ export default forwardRef((props, ref) => {
       <ProFormCheckbox.Group
         name="postIds"
         label="岗位"
-        options={['农业', '制造业', '互联网', '123', '1234', '1236']}
+        request={async () => {
+          const res = await getPosts({ pageSize: 0 });
+          if (res.code === 1) {
+            return res.data?.map((item: any) => ({
+              label: item.postName,
+              value: item.postCode,
+            }));
+          }
+          return [];
+        }}
       />
-      <ProFormCheckbox.Group formItemProps={{className: styles.formItem}} name="roleIds" label="角色" options={roles} />
+      <ProFormCheckbox.Group
+        formItemProps={{ className: styles.formItem }}
+        name="roleIds"
+        label="角色"
+        request={async () => {
+          const res = await getRoles({ pageSize: 0 });
+          if (res.code === 1) {
+            return res.data?.map((item: any) => ({
+              label: item.roleName,
+              value: item.roleId,
+            }));
+          }
+          return []
+        }}
+      />
       <ProFormTextArea
         formItemProps={{
           style: {

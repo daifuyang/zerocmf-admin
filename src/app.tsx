@@ -15,7 +15,7 @@ import { createGlobalStyle, history } from '@umijs/max';
 import { currentUser as queryCurrentUser } from '@/services/user';
 import { AppstoreOutlined } from '@ant-design/icons';
 import { RequestConfig } from '@umijs/max';
-import { Tooltip, message, notification } from 'antd';
+import { App, Tooltip, message, notification } from 'antd';
 import Footer from './components/Footer';
 import styles from './style.less';
 import { codeMessage } from './utils/request';
@@ -103,7 +103,11 @@ export const layout: RunTimeLayoutConfig = ({
     },
     footerRender: () => <Footer />,
     childrenRender: (children) => {
-      return <>{children}</>;
+      return (
+        <>
+          <App>{children}</App>
+        </>
+      );
     },
     ...initialState?.settings,
   };

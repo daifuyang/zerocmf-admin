@@ -168,7 +168,7 @@ function User() {
                 msg: res.msg,
               };
             }}
-            rowKey="id"
+            rowKey="userId"
             options={{
               setting: {
                 listsHeight: 400,
