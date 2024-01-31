@@ -1,3 +1,4 @@
+import { addAdmin } from '@/services/admin';
 import { getDepartments } from '@/services/department';
 import { getPosts } from '@/services/post';
 import { getRoles } from '@/services/role';
@@ -6,7 +7,6 @@ import {
   ModalForm,
   ProForm,
   ProFormCheckbox,
-  ProFormDigit,
   ProFormRadio,
   ProFormSelect,
   ProFormText,
@@ -18,7 +18,9 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
 import styles from './index.less';
 
-export default forwardRef((props, ref) => {
+export default forwardRef((props: any, ref) => {
+  const { onOk } = props;
+
   const { message } = App.useApp();
 
   const [form] = Form.useForm<any>();
@@ -47,9 +49,18 @@ export default forwardRef((props, ref) => {
         },
       }}
       onFinish={async (values) => {
-        message.success('提交成功');
-        console.log('values',values)
-        return true;
+        const res = await addAdmin(values);
+        if (res.code === 1) {
+          message.success(res.msg);
+          if (onOk) {
+            onOk();
+          }
+          setOpen(false);
+          return true;
+        } else {
+          message.error(res.msg);
+          return false;
+        }
       }}
     >
       <ProForm.Group>
@@ -81,17 +92,50 @@ export default forwardRef((props, ref) => {
         ></ProFormTreeSelect>
       </ProForm.Group>
       <ProForm.Group>
-        <ProFormDigit
+        <ProFormText
           width="md"
           name="phoneNumber"
           label="手机号"
           placeholder="请输入名称"
+          rules={[
+            {
+              type: 'method',
+              validator: (rule, value, callback) => {
+                if (!!value) {
+                  const phoneNumberRegex = /^1[3456789]\d{9}$/;
+                  // 示例用法
+                  if (!phoneNumberRegex.test(value)) {
+                    callback('请输入正确的手机号');
+                  } else {
+                    callback();
+                  }
+                }
+              },
+            },
+          ]}
         />
         <ProFormText
           width="md"
           label="邮箱"
           name="email"
           placeholder="请输入邮箱"
+          rules={[
+            {
+              type: 'method',
+              validator: (rule, value, callback) => {
+                if (!!value) {
+                  const emailRegex =
+                    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                  // 示例用法
+                  if (!emailRegex.test(value)) {
+                    callback('请输入正确的邮箱  ');
+                  } else {
+                    callback();
+                  }
+                }
+              },
+            },
+          ]}
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -100,12 +144,30 @@ export default forwardRef((props, ref) => {
           label="登录账号"
           name="loginName"
           placeholder="请输入登录账号"
+          rules={[
+            {
+              required: true,
+              message: '登录账号不能为空',
+            },
+          ]}
         />
         <ProFormText.Password
           width="md"
-          name="密码"
+          name="password"
           label="登录密码"
           placeholder="请输入登录密码"
+          rules={[
+            {
+              type: 'method',
+              validator(rule, value, callback) {
+                if (value.length < 6) {
+                  callback('密码长度不能小于6位');
+                } else {
+                  callback();
+                }
+              },
+            },
+          ]}
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -171,7 +233,7 @@ export default forwardRef((props, ref) => {
               value: item.roleId,
             }));
           }
-          return []
+          return [];
         }}
       />
       <ProFormTextArea

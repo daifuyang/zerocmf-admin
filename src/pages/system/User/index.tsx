@@ -3,14 +3,20 @@ import {
   ImportOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { GridContent, ProColumns, ProTable } from '@ant-design/pro-components';
+import {
+  ActionType,
+  GridContent,
+  ProColumns,
+  ProTable,
+} from '@ant-design/pro-components';
 import { Button, Col, Popconfirm, Row, Space, Switch, message } from 'antd';
 
 import { getSystemUsers } from '@/services/user';
 import Organization from './components/organization';
 
+import { SaveAction } from '@/typing';
 import { useRef } from 'react';
-import ModalSave, { SaveAction } from './Save';
+import ModalSave from './Save';
 
 // const valueEnum = {
 //   '': 'all',
@@ -20,6 +26,9 @@ import ModalSave, { SaveAction } from './Save';
 
 function User() {
   const modalRef = useRef<SaveAction>(null);
+
+  // table ref
+  const tableRef = useRef<ActionType>(null);
 
   const confirmDelete = () => {
     message.success('Click on Yes');
@@ -111,7 +120,9 @@ function User() {
 
   return (
     <GridContent>
-      <ModalSave ref={modalRef} />
+      <ModalSave ref={modalRef} onOk={() => {
+        tableRef.current?.reload();
+      }} />
       <Row gutter={[24, 24]}>
         <Col span={24} md={6}>
           <Organization />
@@ -119,6 +130,7 @@ function User() {
         <Col span={24} md={18}>
           <ProTable<systemUserItem>
             columns={columns}
+            actionRef={tableRef}
             rowSelection={{
               // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
               // 注释该行则默认不显示下拉选项
