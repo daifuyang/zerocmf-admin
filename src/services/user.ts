@@ -19,11 +19,3 @@ export async function currentUser() {
     method: 'GET',
   });
 }
-
-// 获取管理员列表
-export async function getSystemUsers(params: any) {
-  return authRequest('/api/v1/user/admins', {
-    method: 'GET',
-    params,
-  });
-}

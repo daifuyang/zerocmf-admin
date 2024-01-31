@@ -1,3 +1,5 @@
+import { deleteAdmin, getAdmins } from '@/services/admin';
+import { SaveAction } from '@/typing';
 import {
   ExportOutlined,
   ImportOutlined,
@@ -10,13 +12,9 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { Button, Col, Popconfirm, Row, Space, Switch, message } from 'antd';
-
-import { getSystemUsers } from '@/services/user';
-import Organization from './components/organization';
-
-import { SaveAction } from '@/typing';
 import { useRef } from 'react';
 import ModalSave from './Save';
+import Organization from './components/organization';
 
 // const valueEnum = {
 //   '': 'all',
@@ -30,8 +28,14 @@ function User() {
   // table ref
   const tableRef = useRef<ActionType>(null);
 
-  const confirmDelete = () => {
-    message.success('Click on Yes');
+  const confirmDelete = async (id: number) => {
+    const res = await deleteAdmin(id);
+    if (res.code === 1) {
+      tableRef.current?.reload();
+      message.success(res.msg);
+      return;
+    }
+    message.error(res.msg);
   };
 
   type systemUserItem = {
@@ -99,14 +103,24 @@ function User() {
       title: '操作',
       valueType: 'option',
       key: 'option',
-      render: () => [
-        <a key="editable" onClick={() => {}}>
+      render: (_, record) => [
+        <a
+          key="editable"
+          onClick={() => {
+            modalRef.current?.open({
+              title: '修改用户',
+              id: record.userId,
+            });
+          }}
+        >
           修改
         </a>,
         <Popconfirm
           key="delete"
           title="您确定删除吗?"
-          onConfirm={confirmDelete}
+          onConfirm={() => {
+            confirmDelete(record.userId);
+          }}
           okText="确定"
           cancelText="取消"
         >
@@ -120,9 +134,12 @@ function User() {
 
   return (
     <GridContent>
-      <ModalSave ref={modalRef} onOk={() => {
-        tableRef.current?.reload();
-      }} />
+      <ModalSave
+        ref={modalRef}
+        onOk={() => {
+          tableRef.current?.reload();
+        }}
+      />
       <Row gutter={[24, 24]}>
         <Col span={24} md={6}>
           <Organization />
@@ -165,11 +182,13 @@ function User() {
             }}
             cardBordered
             request={async (params = {}) => {
-              const res = await getSystemUsers(params);
+              const res = await getAdmins(params);
               if (res.code === 1) {
                 return await {
                   success: true,
                   data: res.data.data,
+                  total: res.data.total,
+                  pageSize: res.data.pageSize,
                   msg: res.msg,
                 };
               }

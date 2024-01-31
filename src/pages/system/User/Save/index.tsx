@@ -1,4 +1,4 @@
-import { addAdmin } from '@/services/admin';
+import { addAdmin, getAdmin } from '@/services/admin';
 import { getDepartments } from '@/services/department';
 import { getPosts } from '@/services/post';
 import { getRoles } from '@/services/role';
@@ -29,9 +29,20 @@ export default forwardRef((props: any, ref) => {
     title: '添加用户',
   });
 
+  // 加载编辑数据
+  const fetchData = async (id) => {
+    const res = await getAdmin(id);
+    if (res.code === 1) {
+      form.setFieldsValue(res.data);
+      return;
+    }
+    message.error(res.error);
+  };
+
   useImperativeHandle(ref, () => ({
     open(_data: DataState) {
       setData(_data);
+      fetchData(_data.id);
       setOpen(true);
     },
   }));
